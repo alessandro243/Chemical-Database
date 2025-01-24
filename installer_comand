@@ -1,0 +1,1 @@
+pyinstaller --name="Calculadora" --noconfirm --onefile --icon='C:\Users\Thalita\Desktop\Alessandro\Projeto_calculadora\Projeto_calculadora\icon.ico' --noconsole --clean --log-level=WARN C:\Users\Thalita\Desktop\Alessandro\Projeto_calculadora\Projeto_calculadora\pessoal.py

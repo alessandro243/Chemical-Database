@@ -1,0 +1,3 @@
+('C:\\Users\\Thalita\\Desktop\\Alessandro\\ProjetoSGM\\build\\Chemical '
+ 'Database\\PYZ-00.pyz',
+ [])
