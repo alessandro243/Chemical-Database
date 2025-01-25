@@ -1,7 +1,6 @@
-from PySide6.QtWidgets import QLineEdit, QVBoxLayout, QLabel, QGridLayout, QWidget, QApplication, QMainWindow
-from PySide6.QtCore import Qt, QTimer
-from db_utils import selectPet, selectMed2
-import sqlite3
+from PySide6.QtWidgets import QLineEdit, QPushButton, QVBoxLayout, QLabel, QGridLayout, QWidget, QMainWindow
+from PySide6.QtCore import Qt
+from db_utils import selectall2, selectPet, selectMed2, selectPet2
 from db_ import SGM_DB, TABELA_, TABELA
 
 class Qlab_(QLabel):
@@ -11,8 +10,10 @@ class Qlab_(QLabel):
         self.bruh = exit_button
         
     def mousePressEvent(self, ev):
+        self.line.clearGrid()
         self.line.setText(self.text())
         self.bruh.setFocus()
+        self.line.update_label()
 
 class OtherEdit(QLineEdit):
     def __init__(self, window, lay, win: QGridLayout, lf: QVBoxLayout, exit_button, *args, **kwargs):
@@ -32,20 +33,14 @@ class OtherEdit(QLineEdit):
         self.textChanged.connect(self.update_label)
         self.labelsList = []
         self.i = 3
-
-        self.clearGrid()
-        
-
         
         if len(self.labelsList) > 0:
             self.clearLabels()
 
         for row in selectPet(SGM_DB, TABELA_):
             self.lay.addWidget(Qlab_(self.ex_button, self, row[0]))
-            #self.labelsList.append(row[0])
 
     def clearGrid(self):
-    # Remove todos os widgets da grid
         for i in range(self.nlay.count()):
             widget = self.nlay.itemAt(i).widget()
             if widget is not None:
@@ -53,7 +48,7 @@ class OtherEdit(QLineEdit):
 
     def clearLabels(self):
         label = self.labelsList.pop()
-        self.wind.removeWidget(label)  # Remove do layout
+        self.wind.removeWidget(label)
         label.deleteLater()
 
     def focusInEvent(self, event):
@@ -64,8 +59,6 @@ class OtherEdit(QLineEdit):
         self.lf.b2.setEnabled(False)
         self.lf.b3.setEnabled(False)
         self.lf.b4.setEnabled(False)
-        #self.window_.setWindowFlags(self.windowFlags() & ~Qt.WindowTitleHint)
-        """Detecta quando o QLineEdit recebe foco"""
         super().focusInEvent(event)
 
     def focusOutEvent(self, event):
@@ -79,7 +72,8 @@ class OtherEdit(QLineEdit):
         """Detecta quando o QLineEdit perde foco"""
         super().focusOutEvent(event)
     
-    def update_label(self, text):
+    def update_label(self):
+        i = 0
         self.ns.setLayout(self.nlay)
         lista = []
         nomePet = self.text()
@@ -91,20 +85,63 @@ class OtherEdit(QLineEdit):
             lista.append(row)
 
         if len(self.labelsList) > 0:
-            print(123)
             self.clearLabels()
             self.clearGrid()
             self.labelsList.clear()
-            print(len(self.labelsList))
         
-        msg = QLabel(f'Lista de remédios para o Pet:')
+        resultados = selectall2(nomePet, TABELA)
+        for x in resultados:
+            i += x[6]
+            
+        msg = QLabel(f'Foram encontrados {i} remédios para esse pet:')
         msg.setStyleSheet('font-weight: bold;')
+        
+        resultados2 = selectPet2(nomePet, TABELA_)
+        nome = QLabel('Nome')
+        peso = QLabel('Peso')
+        cor = QLabel('Cor')
+        nome.setStyleSheet('font-weight: bold;')
+        peso.setStyleSheet('font-weight: bold;')
+        cor.setStyleSheet('font-weight: bold;')
+
+        n = QLabel(f'{resultados2[0][1]}')
+        spc = QLabel('')
+        p = QLabel(f'{resultados2[0][2]}')
+        spc2 = QLabel('')
+        c = QLabel(f'{resultados2[0][3]}')
         space = QLabel('')
-        space2 = QLabel('')
+        spc3 = QLabel('')
+        spc4 = QLabel('')
+        spc5 = QLabel('')
+        spc6 = QLabel('')
         self.nlay.addWidget(msg, 1, 1)
         self.nlay.addWidget(space, 2, 1)
+        self.nlay.addWidget(n, 2, 7)
+        self.nlay.addWidget(spc, 1, 8)
+        self.nlay.addWidget(p, 2, 9)
+        self.nlay.addWidget(spc2, 1, 10)
+        self.nlay.addWidget(c, 2, 11)
+        self.nlay.addWidget(nome, 1, 7)
+        self.nlay.addWidget(peso, 1, 9)
+        self.nlay.addWidget(cor, 1, 11)
+        self.nlay.addWidget(spc3, 1, 3)
+        self.nlay.addWidget(spc4, 1, 4)
+        self.nlay.addWidget(spc5, 1, 5)
+        self.nlay.addWidget(spc6, 1, 6)
+        edit_b = QPushButton('📝')
 
-
+        edit_b.setStyleSheet("""
+QPushButton {
+    background-color: #ffffff;  /* Cor de fundo */
+    color: white;  /* Cor do texto */
+    border: none;  /* Sem borda */
+    border-radius: 15px;  /* Arredondamento das bordas */
+    padding: 0;  /* Remover preenchimento extra */
+    font-size: 15px;
+}
+""")
+        self.nlay.addWidget(edit_b, 1, 12)
+        edit_b.clicked.connect(self.make(self.window_.upPets,[n.text(),p.text().replace('kg', ''),c.text()]))
         for x, y in enumerate(lista):
 
             p = QLabel('')
@@ -117,6 +154,11 @@ class OtherEdit(QLineEdit):
             y.setText(f'            • {lista[t][1]}')
         
         lista.clear()
+
+    def make(self, func, args):
+        def inter():
+            return func(args)
+        return inter
 
 class SimpleWindow(QMainWindow):
     def __init__(self):

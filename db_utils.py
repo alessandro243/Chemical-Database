@@ -1,6 +1,6 @@
 import sqlite3
 from variables import SGM_DB
-from win_utils import verifiedcient, verifiedstring, verifiedNumber, verifiedData
+from win_utils import verifiedcient, verifiedstring, verifiedNumber, verifiedData, verifiedPeso, verifiedLab
 
 def makeList(bank, tabela):
     con = sqlite3.connect(SGM_DB)
@@ -27,7 +27,7 @@ def create_pet(bank, tabela):
     con.close()
 
 def contar(bank, tabela):
-    con = sqlite3.connect(bank)
+    con = sqlite3.connect(SGM_DB)
     cursor = con.cursor()
     cursor.execute(f"SELECT COUNT(*) FROM {tabela}")
     resultados = cursor.fetchall()
@@ -40,7 +40,6 @@ def insert_pet(bank, tabela, datas: tuple):
     con = sqlite3.connect(bank)
     cursor = con.cursor()
     str_= f'INSERT INTO {tabela} (nome, peso, cor) VALUES (?, ?, ?)'
-
     cursor.execute(str_, datas)
     con.commit()
     cursor.close()
@@ -101,9 +100,18 @@ def selectMed(bank, tabela, nome):
     return resutado
 
 def selectall(bank, tabela):
-    con = sqlite3.connect(bank)
+    con = sqlite3.connect(SGM_DB)
     cursor = con.cursor()
     cursor.execute(f"SELECT * FROM {tabela}")
+    resultados = cursor.fetchall()
+    cursor.close()
+    con.close()
+    return resultados
+
+def selectall2(name, tabela):
+    con = sqlite3.connect(SGM_DB)
+    cursor = con.cursor()
+    cursor.execute(f"SELECT * FROM {tabela} WHERE Pet_nome = '{name}'")
     resultados = cursor.fetchall()
     cursor.close()
     con.close()
@@ -136,6 +144,15 @@ def selectPet(bank, tabela):
     con.close()
     return resultado
 
+def selectPet2(name, tabela):
+    con = sqlite3.connect(SGM_DB)
+    cursor = con.cursor()
+    cursor.execute(f"SELECT * FROM {tabela} WHERE nome = '{name}'")
+    resultado = cursor.fetchall()
+    cursor.close()
+    con.close()
+    return resultado
+
 def up(bank, tabela, args,  data2):
 
     nome = args[1][0].text()
@@ -149,7 +166,7 @@ def up(bank, tabela, args,  data2):
     pet = args[1][8].text()
     old_name = data2[0][1]
 
-    if verifiedstring(nome, args[0][0]) and verifiedcient(nome_f, args[0][1]) and verifiedcient(lab, args[0][2]) and verifiedNumber(peso_l, args[0][3]) and verifiedData(val, args[0][4]) and verifiedNumber(uni, args[0][5]) and verifiedNumber(qtdt, args[0][6]) and verifiedNumber(qtdr, args[0][7]) and verifiedstring(pet, args[0][8]):
+    if verifiedstring(nome, args[0][0]) and verifiedcient(nome_f, args[0][1]) and verifiedLab(lab, args[0][2]) and verifiedPeso(peso_l, args[0][3]) and verifiedData(val, args[0][4]) and verifiedNumber(uni, args[0][5]) and verifiedNumber(qtdt, args[0][6]) and verifiedNumber(qtdr, args[0][7]) and verifiedstring(pet, args[0][8]):
         con = sqlite3.connect(SGM_DB)
         cursor = con.cursor()
         cursor.execute(f'UPDATE {tabela} SET '
@@ -162,7 +179,7 @@ def up(bank, tabela, args,  data2):
                    'QUANTIDADE_TOTAL = ?, '
                    'QUANTIDADE_RESTANTE = ?, '
                    'Pet_nome = ? '
-                   'WHERE NOME_FANTASIA = ? ', (nome.capitalize(), nome_f.capitalize(), lab.capitalize(), peso_l, val, uni, qtdt, qtdr, pet.capitalize(), old_name)
+                   'WHERE NOME_FANTASIA = ? ', (nome.capitalize(), nome_f.capitalize(), lab.capitalize(),f'{peso_l}mg' if peso_l != '-' else peso_l, val, uni, qtdt, qtdr, pet.capitalize(), old_name)
                    )
         cursor.execute(f'SELECT * FROM {tabela} WHERE NOME_FANTASIA = ?', (nome,))
         row_after = cursor.fetchone()
@@ -183,7 +200,7 @@ def up2(bank, tabela, args,  data2):
     pet = args[1][8].text()
     old_name = data2[1]
 
-    if verifiedstring(nome, args[0][0]) and verifiedcient(nome_f, args[0][1]) and verifiedstring(lab, args[0][2]) and verifiedNumber(peso_l, args[0][3]) and verifiedData(val, args[0][4]) and verifiedNumber(uni, args[0][5]) and verifiedNumber(qtdt, args[0][6]) and verifiedNumber(qtdr, args[0][7]) and verifiedstring(pet, args[0][8]):
+    if verifiedstring(nome, args[0][0]) and verifiedcient(nome_f, args[0][1]) and verifiedLab(lab, args[0][2]) and verifiedPeso(peso_l[0:2], args[0][3]) and verifiedData(val, args[0][4]) and verifiedNumber(uni, args[0][5]) and verifiedNumber(qtdt, args[0][6]) and verifiedNumber(qtdr, args[0][7]) and verifiedstring(pet, args[0][8]):
         con = sqlite3.connect(SGM_DB)
         cursor = con.cursor()
         cursor.execute(f'UPDATE {tabela} SET '
@@ -196,9 +213,32 @@ def up2(bank, tabela, args,  data2):
                    'QUANTIDADE_TOTAL = ?, '
                    'QUANTIDADE_RESTANTE = ?, '
                    'Pet_nome = ? '
-                   'WHERE NOME_FANTASIA = ? ', (nome.capitalize(), nome_f.capitalize(), lab.capitalize(), peso_l, val, uni, qtdt, qtdr, pet.capitalize(), old_name)
+                   'WHERE NOME_FANTASIA = ? ', (nome.capitalize(), nome_f.capitalize(), lab.capitalize(), f'{peso_l}mg' if peso_l != '-' else peso_l, val, uni, qtdt, qtdr, pet.capitalize(), old_name)
                    )
         cursor.execute(f'SELECT * FROM {tabela} WHERE NOME_FANTASIA = ?', (nome,))
+        row_after = cursor.fetchone()
+        con.commit()
+        cursor.close()
+        con.close()
+
+def upP(bank, tabela, args, args2):
+    
+    nome = args[0]
+    peso = args[1]
+    cor = args[2]
+    old_name = args2[1][3]
+    
+    if verifiedstring(nome, args2[0][0]) and verifiedNumber(peso, args2[0][1]) and verifiedstring(cor, args2[0][2]):
+        con = sqlite3.connect(SGM_DB)
+        cursor = con.cursor()
+        cursor.execute(f'UPDATE {tabela} SET '
+                   'nome = ?, '
+                   'peso = ?, '
+                   'cor = ? '
+                   'WHERE nome = ? ', (nome.capitalize(), f'{peso}kg', cor.capitalize(), old_name)
+                   )
+
+        cursor.execute(f'SELECT * FROM {tabela} WHERE nome = ?', (nome,))
         row_after = cursor.fetchone()
         con.commit()
         cursor.close()

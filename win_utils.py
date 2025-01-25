@@ -33,7 +33,6 @@ def spaceInit(word, label):
         return False
     return True
 
-
 def verifiedstring(word, label):
     label.setStyleSheet('color: red;')
     veri_3 = hollowVari(word, label)
@@ -117,41 +116,103 @@ def verifiedData(data, label):
     vari_4 = positionBar(data, label)
     vari_1 = verifyNumbers(data, label)
     vari_6 = plusthan12(data, label)
-
+    
     if vari_1 and vari_2 and vari_3 and vari_4 and vari_5 and vari_6:
+    
         return True
     return False
 
 def verifyNumbers(data, label):
-    for x in data:
-        if x.isalpha():
-            label.setText('A data não deve conter letras, siga a máscara: XX/YYYY')
-            return False
-        return True
+    if not data == '-':
     
+        for x in data:
+            if x.isalpha() or x == '-':
+                label.setText('Não deve conter letras ou hífens')
+                return False
+    
+    return True
+
 def checkBar(data, label):
-    if data.count('/') > 1:
+    if data.count('/') > 1 and data != '-':
         label.setText('Formato inválido, siga a máscara: MM/YYYY')
         return False
     return True
 
 def positionBar(data, label):
-    if data[2] != '/':
-        label.setText('Formato inválido, siga a máscara: MM/YYYY')
-        return False
+    if not data == '-':
+        if data[2] != '/':
+            label.setText('Formato inválido, siga a máscara: MM/YYYY')
+            return False
     return True
 
 def largeData(data, label):
-    if len(data) < 7 or len(data) > 7:
+    if (len(data) < 7 or len(data) > 7) and data != '-':
         label.setText('Formato inválido, siga a máscara: MM/YYYY')
         return False
     return True
 
 def plusthan12(data, label):
     mes = data[0:2]
+    if not data == '-':
+        if int(mes) > 12 and data != '-':
+            label.setText('Mês inválido')
+            return False
+    return True
 
-    if int(mes) > 12:
-        label.setText('Mês inválido')
+def verifiedPeso(valor, label):
+    label.setStyleSheet('color: red;')
+
+    veri_1 = hollowVari(valor, label)
+
+    if not veri_1:
         return False
     
+    veri_2 = haveSpaceOrDot(valor, label)
+    veri_3 = verifyNumbers(valor, label)
+    
+    if veri_1 and veri_2 and veri_3:
+        return True
+    
+def defintive(valor, label):
+
+    if valor[-2] == 'm' and valor[-1] == 'g' and valor [0:-2].isdigit():
+        return True
+    
+def haveSpaceOrDot(valor, label):
+    if valor.isdigit():
+        if int(valor) > 0:
+            return True
+
+    if not valor == '-':
+        for x in valor:
+            if x == ' ' or x == '.' or '-':
+                label.setText('Não deve conter espaços, pontos ou números justons a hífens')
+                return False
+        
     return True
+
+def definitiveLab(valor):
+    if valor == '-':
+        return True
+
+def verifiedLab(valor, label):
+    label.setStyleSheet('color: red;')
+    veri_3 = hollowVari(valor, label)
+
+    if not veri_3:
+        return False
+    
+    vari_5 = definitiveLab(valor)
+
+    if vari_5:
+        return True
+    
+    veri_4 = spaceInit(valor, label)
+    veri_1 = verifyWord(valor, label)
+    veri_2 = noNumbnoDig(valor, label)
+
+    if veri_1 and veri_2 and veri_3 and veri_4:
+        label.setText('')
+        return True
+    return False
+    

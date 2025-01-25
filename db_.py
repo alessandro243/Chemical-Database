@@ -1,6 +1,6 @@
 import sqlite3
 from db_utils import create_med, insert_med, create_pet, insert_pet
-import shutil
+
 SGM_DB = 'C:\\Users\\Thalita\\Desktop\\Alessandro\\Projeto SGM\\SGM.sqlite3'
 TABELA = 'Medicamentos'
 TABELA_ = 'Pet'

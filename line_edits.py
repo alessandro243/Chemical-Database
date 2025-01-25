@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QLineEdit, QPushButton
-from win_utils import verifiedstring, verifiedNumber, verifiedData
-from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QWidget, QGridLayout
+from win_utils import verifiedstring
+from PySide6.QtWidgets import QMainWindow, QLabel, QWidget, QGridLayout
 
 class NumberEdits(QLineEdit):
     def __init__(self, label, *args, **kwargs):
@@ -34,7 +34,7 @@ class MainWindow(QMainWindow):
         self.lay.addWidget(self.b1)
         
         self.lab = QLabel('')
-        self.lab2 = QLabel('estou aqui')
+        self.lab2 = QLabel('')
         self.lab3 = QLabel('')
         self.lab4 = QLabel('')
 
@@ -71,7 +71,6 @@ class OtherEdits(QLineEdit):
     def function(self, fun):
         
         texto = self.text()
-        #self.remove_acentos_simples(texto)
 
         if fun(texto, self.label):
             self.state = True
@@ -95,24 +94,3 @@ class OtherEdits(QLineEdit):
         def inter():
             return func(args)
         return inter
-    
-    #def remove_acentos_simples(self, palavra):
-        acentos = {
-        'á': 'a', 'à': 'a', 'ã': 'a', 'â': 'a',
-        'é': 'e', 'è': 'e', 'ê': 'e',
-        'í': 'i', 'ì': 'i',
-        'ó': 'o', 'ò': 'o', 'õ': 'o', 'ô': 'o',
-        'ú': 'u', 'ù': 'u', 'û': 'u',
-        'ç': 'c',
-    }
-        for acento, sem_acento in acentos.items():
-            palavra = palavra.replace(acento, sem_acento)
-        return palavra
-
-
-if __name__ ==  '__manin__':
-    app = QApplication()
-    wind = MainWindow()
-
-    wind.show()
-    app.exec()

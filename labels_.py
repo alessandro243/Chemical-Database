@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QLabel, QLineEdit
 from PySide6.QtGui import Qt
+import datetime
 
 class QLabel_(QLabel):
     def __init__(self, win, row, text="", exit_button = None, line: QLineEdit = None, parent=None):
@@ -19,6 +20,23 @@ class QLabel_(QLabel):
         lab = f'Laboratório: {self.row[3]}'
         peso = f'Peso líquido: {self.row[4]}'
         validade = f'Validade: {self.row[5]}'
+
+        if self.row[5] != '-':
+            
+            ano = self.row[5][3:7]
+            mes = self.row[5][0:2]
+
+            data = datetime.date(int(ano), int(mes), 1)
+            diferenca = data - datetime.date.today()
+
+            if diferenca < datetime.timedelta(days=60):
+                    resume.la6.setStyleSheet('color: red;')
+            
+            else:
+                resume.la6.setStyleSheet('color: black;')
+        else:
+            resume.la6.setStyleSheet('color: black;')
+            
         unidade = f'Unidade: {self.row[6]}'
         qtdt = f'Quant. total: {self.row[7]}'
         qtdr = f'Quant. restante: {self.row[8]}'

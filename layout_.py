@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QLabel, QSpacerItem, QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QGridLayout, QScrollArea
+from PySide6.QtWidgets import QLabel, QWidget, QHBoxLayout, QVBoxLayout, QGridLayout, QScrollArea
 from buttons_ import Button_
 
 class FristScreenLayout(QHBoxLayout):
@@ -87,16 +87,12 @@ class LeftLayoutFristScreen(SubGridsMather):
         lay.addWidget(self.la8)
         lay.addWidget(self.la9)
         lay.addWidget(self.la10)
-        #lay.addWidget(self.la0, 1, 1)
-        #lay.addWidget(self.l, 1, 1)
 
         self.appendSeveral(
             self.labelList, 
             [self.la, self.la1, self.la2, self.la3, self.la4, self.la5, self.la6, self.la7, self.la8, self.la9, self.la10]
             )
-        #self.addSeveral(
-            #[self.la, self.la1, self.la2, self.la3, self.la4, self.la5, self.la6, self.la7, self.la8, self.la9, self.la10]
-        #)
+    
         self.addWidget(s)
 
 class RightLayoutFristScreen(QGridLayout):

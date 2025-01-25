@@ -1,18 +1,14 @@
-from PySide6.QtWidgets import QMessageBox, QLabel, QMainWindow, QVBoxLayout, QLabel, QWidget, QScrollArea, QPushButton
+from PySide6.QtWidgets import QMessageBox, QLabel, QMainWindow, QLabel, QWidget, QScrollArea, QPushButton
 from labels_ import QLabel_
-from testing import Qlab_, OtherEdit
+from testing import OtherEdit
 from PySide6.QtCore import QTimer, Signal
 from line_edits import OtherEdits
-from buttons_ import Button_
 from PySide6.QtGui import Qt, QKeyEvent, QIcon
 from variables import TABELA, SGM_DB, LISTA, TABELA_
-from db_utils import update_, insert_med, insert_pet, selectMed, up, up2, selectPet, selectMed3, contar, selectall, makeList
-from win_utils import verifiedstring, verifiedNumber, verifiedData, verifiedcient
-import sqlite3
+from db_utils import update_, insert_med, insert_pet, selectMed, up, up2, selectMed3, contar, selectall, makeList, upP
+from win_utils import verifiedstring, verifiedNumber, verifiedData, verifiedcient, verifiedPeso, verifiedLab
 import datetime
-from layout_ import LeftLayoutFristScreen, FristScreenLayout
-
-#update_(SGM_DB, LISTA, TABELA)
+from layout_ import FristScreenLayout
 
 class  MainWindow(QMainWindow):
     enterPressed = Signal()
@@ -45,10 +41,6 @@ class  MainWindow(QMainWindow):
         self.escPressed.connect(self.makeUpdateGrid)
         self.setWindowTitle('Chemical Database')
         self.setWindowIcon(QIcon("images.ico"))
-
-    #def moveEvent(self, event):
-        # Reverte a posição da janela para a posição anterior
-        #self.move(event.oldPos())
     
     def moveEvent(self, event):
         # Este evento é disparado quando a janela muda de posição
@@ -77,7 +69,7 @@ class  MainWindow(QMainWindow):
             return event.ignore()
 
     def makeUpdateGrid(self):
-
+        self.ol = []
         self.editList.clear()
         self.clearGrid()
         LISTA.clear()
@@ -87,21 +79,22 @@ class  MainWindow(QMainWindow):
         self.editList3.clear()
         self.principalLayout.leftLayout.la3.setStyleSheet('font-weight: normal;')
 
-        #if self.con is None:
-            #self.con = sqlite3.connect(SGM_DB)
-            #self.cursor_ = self.con.cursor()
-
         for row in makeList(SGM_DB, TABELA):
+
             if row not in LISTA:
-                LISTA.append(row)
+                if not row[5] == '-':
+                    LISTA.append(row)
+                else:
+                    self.ol.append(row)
 
         for x, y in enumerate(LISTA):
-            
             try:
                 LISTA.sort(key=lambda item: datetime.date(int(item[5][3:7]), int(item[5][0:2]), 1))
             except ValueError as e:
                 print(f"Erro ao processar datas: {e}")
-                    
+        
+        for x in self.ol:
+            LISTA.append(x)
         
         label1 = QLabel("Nome do remédio")
         label2 = QLabel("Peso líquido")
@@ -140,18 +133,19 @@ QPushButton {
             hoje = datetime.date.today()
             ano = val.text()[3:7]
             mes = val.text()[0:2]
-            data = datetime.date(int(ano), int(mes), 1)
-            diferenca = data - hoje
+            if y[5] != '-':
+                data = datetime.date(int(ano), int(mes), 1)
+                diferenca = data - hoje
 
-            if diferenca < datetime.timedelta(days=60):
-                nome.setStyleSheet('color: red;')
-                lab.setStyleSheet('color: red;')
-                val.setStyleSheet('color: red;')
-                nome_f.setStyleSheet('color: red;')
-                qtd_total.setStyleSheet('color: red;')
-                qtd_restant.setStyleSheet('color: red;')
-                pet.setStyleSheet('color: red;')
-                
+                if diferenca < datetime.timedelta(days=60):
+                    nome.setStyleSheet('color: red;')
+                    lab.setStyleSheet('color: red;')
+                    val.setStyleSheet('color: red;')
+                    nome_f.setStyleSheet('color: red;')
+                    qtd_total.setStyleSheet('color: red;')
+                    qtd_restant.setStyleSheet('color: red;')
+                    pet.setStyleSheet('color: red;')
+
             self.addToLayout(x+1, [edit_b])
             self.addToLayout(x+1, [nome, nome_f, lab, qtd_total, qtd_restant, val, pet], 4)
         
@@ -159,8 +153,7 @@ QPushButton {
 
     def editgrid(self, args):
         self.clearGrid()
-        #self.editList.clear()
-
+        
         b1 = QLabel('Nome:')
         b2 = QLabel('Nome farmacêutico:')
         b3 = QLabel('Laboratório:')
@@ -184,8 +177,8 @@ QPushButton {
 
         l1 = OtherEdits(lab1, verifiedstring)
         l2 = OtherEdits(lab2, verifiedcient)
-        l3 = OtherEdits(lab3, verifiedcient)
-        l4 = OtherEdits(lab4, verifiedNumber)
+        l3 = OtherEdits(lab3, verifiedLab)
+        l4 = OtherEdits(lab4, verifiedPeso)
         l5 = OtherEdits(lab5, verifiedData)
         l6 = OtherEdits(lab6, verifiedNumber)
         l7 = OtherEdits(lab7, verifiedNumber)
@@ -195,7 +188,7 @@ QPushButton {
         l1.setText(str(args[1]))
         l2.setText(str(args[2]))
         l3.setText(str(args[3]))
-        l4.setText(str(args[4]))
+        l4.setText(str(args[4].replace('mg', '')))
         l5.setText(str(args[5]))
         l6.setText(str(args[6]))
         l7.setText(str(args[7]))
@@ -221,7 +214,6 @@ QPushButton {
         self.principalLayout.rightLayout.addWidget(update, 20, 0)
         self.principalLayout.rightLayout.addWidget(lab, 20, 1)
         l1.setFocus()
-
         
     def upd2(self, args):
             
@@ -241,6 +233,8 @@ QPushButton {
             self.makeUpdateGrid()
 
     def makeAddPetGrid(self):
+        resume = self.principalLayout.leftLayout
+        resume.la6.setStyleSheet('color: black;')
         path_ = self.principalLayout.rightLayout.addWidget
         self.clearGrid()
         self.editList.clear()
@@ -298,9 +292,6 @@ QPushButton {
         self.enterPressed.connect(send, self.make(self.send_, [lab2, lab4, lab6]))
         self.connectButtonClicked(send, self.make(self.send_, [lab2, lab4, lab6]))
 
-        #self.principalLayout.rightLayout.addItem(space, 1, 2)
-        #self.principalLayout.rightLayout.addItem(space2, 8, 2)
-        
         path_(lab14, 1, 1)
         lab14.setFixedSize(150, 150)
         path_(lab13, 1, 2)
@@ -350,8 +341,6 @@ QPushButton {
             args[2].setText('Registrado com sucesso!')
             args[2].setStyleSheet('color: black;')
 
-            #QTimer.singleShot(3000, self.make(self.bruh, args))
-
     def bruh(self, args):
         args[0].setText('')
         args[1].setText('')
@@ -365,6 +354,8 @@ QPushButton {
         self.editList2[2].clear()
 
     def makeAddGrid(self):
+        resume = self.principalLayout.leftLayout
+        resume.la6.setStyleSheet('color: black;')
         self.labelsList_.clear()
         self.clearGrid()
         lf = self.principalLayout.leftLayout
@@ -419,8 +410,8 @@ QPushButton {
 
         l1 = OtherEdits(lab1, verifiedstring)
         l2 = OtherEdits(lab2, verifiedcient)
-        l3 = OtherEdits(lab3, verifiedcient)
-        l4 = OtherEdits(lab4, verifiedNumber)
+        l3 = OtherEdits(lab3, verifiedLab)
+        l4 = OtherEdits(lab4, verifiedPeso)
         l5 = OtherEdits(lab5, verifiedData)
         l6 = OtherEdits(lab6, verifiedNumber)
         l7 = OtherEdits(lab7, verifiedNumber)
@@ -451,10 +442,12 @@ QPushButton {
             [b1, b2, b3, b4, b5, b6, b7, b8, b9],
             150, 40
         )
+
         for x in lista:
             x.setText('a')
             x.clear()
         l1.setFocus()
+
         self.principalLayout.rightLayout.addWidget(submit, 20, 0)
 
     def inclui(self, args):
@@ -506,7 +499,6 @@ QPushButton {
             self.connectButtonClicked(edit, self.make(self.edit_, consulta))
             path_(edit, 1, 3)
 
-
     def make(self, func, args):
             def inter():
                 func(args)
@@ -538,8 +530,8 @@ QPushButton {
 
         l1 = OtherEdits(lab1, verifiedstring)
         l2 = OtherEdits(lab2, verifiedcient)
-        l3 = OtherEdits(lab3, verifiedcient)
-        l4 = OtherEdits(lab4, verifiedNumber)
+        l3 = OtherEdits(lab3, verifiedLab)
+        l4 = OtherEdits(lab4, verifiedPeso)
         l5 = OtherEdits(lab5, verifiedData)
         l6 = OtherEdits(lab6, verifiedNumber)
         l7 = OtherEdits(lab7, verifiedNumber)
@@ -549,7 +541,7 @@ QPushButton {
         l1.setText(str(consulta[1]))
         l2.setText(str(consulta[2]))
         l3.setText(str(consulta[3]))
-        l4.setText(str(consulta[4]))
+        l4.setText(str(consulta[4].replace('mg', '')))
         l5.setText(str(consulta[5]))
         l6.setText(str(consulta[6]))
         l7.setText(str(consulta[7]))
@@ -586,8 +578,6 @@ QPushButton {
 
     def upd(self, args):
         
-        #QTimer.singleShot(3000, self.make(self.bruh2, args[0][0]))
-        
         nome = args[1][0].text()
         nome_f = args[1][1].text()
         lab = args[1][2].text()
@@ -598,7 +588,7 @@ QPushButton {
         qtdr = args[1][7].text()
         pet = args[1][8].text()
         
-        if verifiedstring(nome, args[0][0]) and verifiedcient(nome_f, args[0][1]) and verifiedcient(lab, args[0][2]) and verifiedNumber(peso_l, args[0][3]) and verifiedData(val, args[0][4]) and verifiedNumber(uni, args[0][5]) and verifiedNumber(qtdt, args[0][6]) and verifiedNumber(qtdr, args[0][7]) and verifiedstring(pet, args[0][8]):
+        if verifiedstring(nome, args[0][0]) and verifiedcient(nome_f, args[0][1]) and verifiedLab(lab, args[0][2]) and verifiedPeso(peso_l[0:2], args[0][3]) and verifiedData(val, args[0][4]) and verifiedNumber(uni, args[0][5]) and verifiedNumber(qtdt, args[0][6]) and verifiedNumber(qtdr, args[0][7]) and verifiedstring(pet, args[0][8]):
             try:
                 
                 up(SGM_DB, TABELA, args, self.datas)
@@ -606,10 +596,6 @@ QPushButton {
             except IndexError:
                 self.clearGrid()
                 self.makeUpdateGrid()
-            
-            finally:
-                ...
-                #self.con.close()
 
             args[0][-1].setText('Registrado com sucesso!')
             QTimer.singleShot(3000, args[0][-1].hide)
@@ -617,6 +603,8 @@ QPushButton {
             self.makeUpdateGrid()
 
     def foundOp(self):
+        resume = self.principalLayout.leftLayout
+        resume.la6.setStyleSheet('color: black;')
         self.clearGrid()
         path_ = self.principalLayout.rightLayout
         lf = self.principalLayout.leftLayout
@@ -642,14 +630,14 @@ QPushButton {
         lab6 = QLabel('')
         lab7 = QLabel('')
         lab8 = QLabel('')
+        
         self.b1.setFixedSize(300, 50)
         b2.setFixedSize(300, 50)
         self.addToVerticalLayout([self.b1, b2, lab1, lab2, lab4, lab5, lab6], 1, 1, 1, True)
         self.addToVerticalLayout([lab7, lab8], 3, 2, 1)
         self.connectButtonClicked(self.b1, self.make(self.petFound, self.b1))
         self.connectButtonClicked(b2, self.makefoundGrid)
-        #self.connectButtonClicked()
-
+    
     def retorno(self, x):
         self.ob = x
         return
@@ -666,15 +654,13 @@ QPushButton {
         exit_button = QLabel('Botão de fuga')
         exit_button = QLabel('')
         nome = QLabel('Nome do Pet:')
-
         line = OtherEdit(self, nw, path_, lf, exit_button)
+        
         self.retorno(line)
-        #path_(nome, 2, 1)
         path_.addWidget(nome, 3, 1)
         path_.addWidget(line, 4, 1)
         path_.addWidget(exit_button)
-        #self.addToVerticalLayout([l1, l2, l3], 5, 1, 1)
-
+        
     def makefoundGrid(self):
         self.makeUpdateGrid()
         self.clearGrid()
@@ -720,7 +706,6 @@ QPushButton {
         self.editList3.append(l)
         nome_f = QLabel('Nome do medicamento:')
 
-    
         path_(id, 1, 1)
         path_(nome, 2, 1)
         path_(nome_farmaceutico, 3, 1)
@@ -768,10 +753,10 @@ QPushButton {
             RESULTADO = selectMed3(SGM_DB, TABELA_, pet.capitalize())
             if len(RESULTADO) < 1:
                 
-                self._showError('Não foi possível registrar', 'O nome do pet fornecido não se encontra registrado, registre-o primeiro!')
+                self._showError('Não foi possível registrar', 'O nome do pet não foi encontrado no  sistema, registre-o primeiro!')
                 return
             
-            insert_med(SGM_DB, TABELA, (nome.capitalize(), nome_f.capitalize(), lab.capitalize(), peso, val, uni, qtd, qtd_rest, pet.capitalize()))
+            insert_med(SGM_DB, TABELA, (nome.capitalize(), nome_f.capitalize(), lab.capitalize(), f'{peso}mg' if peso != '-' else peso, val, uni, qtd, qtd_rest, pet.capitalize()))
 
             lab_ = QLabel('')
             self.principalLayout.rightLayout.addWidget(lab_, 20, 1)
@@ -784,8 +769,115 @@ QPushButton {
             
             LISTA.clear()
             update_(SGM_DB, LISTA, TABELA)
-
         
+    def upPets(self, args):
+        oldname = args[0]
+        resume = self.principalLayout.leftLayout
+        resume.la6.setStyleSheet('color: black;')
+        path_ = self.principalLayout.rightLayout.addWidget
+        self.clearGrid()
+        self.editList.clear()
+        self.editList2.clear()
+        self.labelsList_.clear()
+        lf = self.principalLayout.leftLayout
+        bold_ = 'font-weight: bold;'
+        spaces_ = 10*' '
+
+        resultados = contar(SGM_DB, TABELA_)
+
+        self.principalLayout.leftLayout.la.setText('Registro de pets:')
+        self.principalLayout.leftLayout.la1.setText(f'{spaces_}Há um total de {resultados[0][0]} pets registrados.' )
+        lf.la3.setText('Função Adicionar pets:')
+        lf.la3.setStyleSheet(bold_)
+        lf.la4.setText(f'{spaces_} Fução que permite ao usuário adicionar')
+        lf.la5.setText(f'{spaces_} novos pets ao sistema')
+        lf.la6.setText(f'{spaces_} fornecendo os dados requeridos.')
+        lf.la7.setText(f'{spaces_} É necessária para adição de medicamentos')
+        lf.la8.setText(f'{spaces_} para novos pets.')
+
+        lab14 = QLabel('')
+        lab13 = QLabel('')
+        lab12 = QLabel('')
+        lab11 = QLabel('')        
+        lab10 = QLabel('')
+        lab9 = QLabel('')
+        lab8 = QLabel('')
+        lab7 = QLabel('')
+        lab1 = QLabel('Novo nome:')
+        lab1.setStyleSheet('font-size: 13px; font-weight: bold')
+        lab2 = QLabel('')
+        lab2.setStyleSheet('color: red;')
+        lab3 = QLabel('Novo peso:')
+        lab3.setStyleSheet('font-size: 13px; font-weight: bold')
+        lab4 = QLabel('')
+        lab4.setStyleSheet('color: red;')
+        lab5 = QLabel('Cor:')
+        lab5.setStyleSheet('font-size: 13px; font-weight: bold')
+        lab6 = QLabel('')
+        lab6.setStyleSheet('color: red;')
+        self.labelsList_.append(lab2)
+        self.labelsList_.append(lab4)
+        self.labelsList_.append(lab6)
+        line1 = OtherEdits(lab2, verifiedstring)
+        line2 = OtherEdits(lab4, verifiedNumber)
+        line3 = OtherEdits(lab6, verifiedstring)
+
+        self.editList2.append(line1)
+        self.editList2.append(line2)
+        self.editList2.append(line3)
+
+        send = QPushButton('Update pet')
+        
+        path_(lab14, 1, 1)
+        lab14.setFixedSize(150, 150)
+        path_(lab13, 1, 2)
+        path_(lab12, 2, 2)
+        path_(lab11, 3, 2)
+        path_(lab10, 4, 2)
+        path_(lab9, 5, 2)
+        path_(lab8, 6, 2)
+        path_(lab7, 7, 2)
+        path_(lab1, 8, 2)
+        path_(lab2, 9, 3)
+        path_(lab3, 10, 2)
+        path_(lab4, 11, 3)
+        path_(lab5, 12, 2)
+        path_(lab6, 13, 3)
+        path_(line1, 8, 3)
+        path_(line2, 10, 3)
+        path_(line3, 12, 3)
+        path_(send, 12, 4)
+        
+        line1.setText(f'{args[0]}')
+        line2.setText(args[1])
+        line3.setText(args[2])
+        line1.setFocus()
+        self.enterPressed.connect(send, self.make(self.sending, [[lab2, lab4, lab6],[line1, line2, line3, oldname]]))
+        self.connectButtonClicked(send, self.make(self.sending, [[lab2, lab4, lab6],[line1, line2, line3, oldname]]))
+
+    def sending(self, args):
+        self.principalLayout.leftLayout.la.setText('Registro de Remédios')
+        
+        nome = args[1][0].text()
+        peso = args[1][1].text().capitalize()
+        cor = args[1][2].text().capitalize()
+    
+        if self.editList2[0].state and self.editList2[1].state and self.editList2[2].state:
+            
+            for x in self.labelsList_:
+                x.setText('')
+            
+            for x in self.editList2:
+                x.clear()
+
+            upP(SGM_DB , TABELA_, (nome, peso, cor), args)
+
+            args[0][0].setText('')
+            args[0][1].setText('')
+            args[0][2].setText('Atualizado com sucesso!')
+            args[0][2].setStyleSheet('color: black;')
+            self.makeUpdateGrid()
+
     def clearGrid(self):
     # Remove todos os widgets da grid
         for i in range(self.principalLayout.rightLayout.count()):

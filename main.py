@@ -1,9 +1,7 @@
 from PySide6.QtWidgets import QApplication
 from main_window import MainWindow
-from layout_ import FristScreenLayout, SecondScreenLayout
-import sqlite3
 from db_utils import create_med, create_pet
-from variables import SGM_DB, LISTA, TABELA, TABELA_
+from variables import SGM_DB, TABELA, TABELA_
 
 
 create_pet(SGM_DB, TABELA_)

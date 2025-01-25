@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QApplication, QVBoxLayout, QWidget, QLineEdit, QPushButton
+from PySide6.QtWidgets import QVBoxLayout, QWidget, QLineEdit, QPushButton
 from PySide6.QtCore import Qt
 
 class SimpleWindow(QWidget):
