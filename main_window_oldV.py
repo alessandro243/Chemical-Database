@@ -183,9 +183,8 @@ QPushButton {
         l6 = OtherEdits(lab6, verifiedNumber)
         l7 = OtherEdits(lab7, verifiedNumber)
         l8 = OtherEdits(lab8, verifiedNumber)
-        l9 = OtherEdit(self, QWidget(), self.principalLayout.rightLayout, self.principalLayout.leftLayout, b1)
-        l9.setFixedSize(l8.width(), l8.height())
-
+        l9 = OtherEdits(lab9, verifiedstring)
+        
         l1.setText(str(args[1]))
         l2.setText(str(args[2]))
         l3.setText(str(args[3]))
@@ -218,7 +217,7 @@ QPushButton {
         
     def upd2(self, args):
             
-        if args[1][0].state and args[1][1].state and args[1][2].state and args[1][3].state and args[1][4].state and args[1][5].state and args[1][6].state and args[1][7].state:
+        if args[1][0].state and args[1][1].state and args[1][2].state and args[1][3].state and args[1][4].state and args[1][5].state and args[1][6].state and args[1][7].state and args[1][8].state:
             try:
                 
                 up2(SGM_DB, TABELA, args, args[2])
@@ -417,8 +416,7 @@ QPushButton {
         l6 = OtherEdits(lab6, verifiedNumber)
         l7 = OtherEdits(lab7, verifiedNumber)
         l8 = OtherEdits(lab8, verifiedNumber)
-        l9 = OtherEdit(self, QWidget(), self.principalLayout.rightLayout, self.principalLayout.leftLayout, b1)
-        l9.setFixedSize(l8.width(), l8.height())
+        l9 = OtherEdits(lab9, verifiedstring)
 
         lista.append(l1)
         lista.append(l2)
@@ -538,8 +536,8 @@ QPushButton {
         l6 = OtherEdits(lab6, verifiedNumber)
         l7 = OtherEdits(lab7, verifiedNumber)
         l8 = OtherEdits(lab8, verifiedNumber)
-        l9 = OtherEdit(self, QWidget(), self.principalLayout.rightLayout, self.principalLayout.leftLayout, b1)
-        l9.setFixedSize(l8.width(), l8.height())
+        l9 = OtherEdits(lab9, verifiedstring)
+        
         l1.setText(str(consulta[1]))
         l2.setText(str(consulta[2]))
         l3.setText(str(consulta[3]))
@@ -590,7 +588,7 @@ QPushButton {
         qtdr = args[1][7].text()
         pet = args[1][8].text()
         
-        if verifiedstring(nome, args[0][0]) and verifiedcient(nome_f, args[0][1]) and verifiedLab(lab, args[0][2]) and verifiedPeso(peso_l[0:2], args[0][3]) and verifiedData(val, args[0][4]) and verifiedNumber(uni, args[0][5]) and verifiedNumber(qtdt, args[0][6]) and verifiedNumber(qtdr, args[0][7]):
+        if verifiedstring(nome, args[0][0]) and verifiedcient(nome_f, args[0][1]) and verifiedLab(lab, args[0][2]) and verifiedPeso(peso_l[0:2], args[0][3]) and verifiedData(val, args[0][4]) and verifiedNumber(uni, args[0][5]) and verifiedNumber(qtdt, args[0][6]) and verifiedNumber(qtdr, args[0][7]) and verifiedstring(pet, args[0][8]):
             try:
                 
                 up(SGM_DB, TABELA, args, self.datas)
@@ -742,7 +740,7 @@ QPushButton {
         qtd_rest = args[1][7].text()
         pet = args[1][8].text()
 
-        if args[0][0].state and args[0][1].state and args[0][2].state and args[0][3].state and args[0][4].state and args[0][5].state and args[0][6].state and args[0][7].state:
+        if args[0][0].state and args[0][1].state and args[0][2].state and args[0][3].state and args[0][4].state and args[0][5].state and args[0][6].state and args[0][7].state and args[0][8].state:
             for x in self.editList:
                 x.clear()
             
