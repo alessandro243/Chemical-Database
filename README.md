@@ -44,4 +44,4 @@ O caminho referenciado para criar o banco de dados não era adequado ao exportar
 
 ## ⏭️ Próximos passos
 
-Futuramente, a inclusão do pet também contará com o registro da espécie do animal.
+Futuramente, a inclusão do pet também contará com o registro da idade do animal.
