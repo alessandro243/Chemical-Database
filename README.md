@@ -6,11 +6,27 @@ O software para gerenciar estoques de medicamentos veterinários. Ele facilita a
 
 O programa possui quatro funções principais que resumem seu funcionamento. Ao iniciar o executável, ele executa a primeira função, chamada "Listar", responsável pela exibição dos dados descritos acima. Essa função é essencialmente responsável pela saída de dados para o usuário.
 
+<img align="center" src = "listar.png" width = 500>
+<br>
+<br>
+
 O segundo encargo é chamado "Adicionar", sendo o elemento responsável por registrar medicamentos no banco de dados. Ele exige que o usuário insira informações sobre o remédio, incluindo a identificação do pet para o qual o medicamento será destinado, pois esse campo é obrigatório para que o programa relacione o banco de remédios com o de animais de estimação.
+
+<img align="center" src = "Adicionar.png" width = 500>
+<br>
+<br>
 
 Antes de registrar qualquer remédio, o usuário precisa registrar ao menos um pet. Isso é feito através do método "Adicionar Pet", onde são inseridos a cor, o peso do animal e o nome, que servirá como identificador na relação entre os bancos de dados. Caso seja necessário registrar um remédio sem um pet específico, recomenda-se criar previamente um pet com nome "Indefinido" ou "Indeterminado".
 
+<img align="center" src = "addpet.png" width = 500>
+<br>
+<br>
+
 A quarta função, "Buscar", utiliza outros quatro métodos como subfunções para realizar pesquisas no banco de dados. Duas dessas funções realizam buscas diretas, utilizando o nome como identificador para remédios e pets: "Consultar Pets" e "Buscar Medicamentos". Os outros dois submétodos da função "Buscar" permitem a atualização dos elementos já cadastrados no banco de dados. Dessa forma, ao pesquisar pelo nome, o usuário pode acessar novamente a tela de registro para atualizar os dados.
+
+<img align="center" src = "listar.png" width = 500>
+<br>
+<br>
 
 ### ⚙️ Tecnologias Utilizadas 
 
